@@ -1,13 +1,15 @@
 package com.backend.learner_placement.dtos;
 
 public class AuthResponse {
-    private Long id;
-    private String name;
-    private String email;
-    private String role;
-    private String message;
+	private Long id;
+	private String name;
+	private String email;
+	private String role;
+	private String message;
+	private String token;
 
-    public AuthResponse() {}
+
+	public AuthResponse() {}
 
 	public AuthResponse(Long id, String name, String email, String role, String message) {
 		this.id = id;
@@ -57,5 +59,10 @@ public class AuthResponse {
 		this.message = message;
 	}
 
-    
+	public String getToken() { 
+		return token; 
+	}
+	public void setToken(String token) { 
+		this.token = token; 
+	}
 }
