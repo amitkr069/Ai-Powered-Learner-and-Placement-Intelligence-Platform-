@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 import os
+from sklearn.ensemble import RandomForestClassifier
+import joblib
 
 def generate_initial_data():
     os.makedirs('data', exist_ok=True)
@@ -33,5 +35,17 @@ def generate_initial_data():
     df_assess.to_csv('data/assessment_data.csv', index=False)
     print("Data generation complete.")
 
+
+def train_model():
+    df = pd.read_csv('data/learner_scores.csv')
+    y = ((df['coding_score'] > 70) & (df['communication_score'] > 70)).astype(int)
+    X = df[['coding_score', 'aptitude_score', 'communication_score']]
+    
+    model = RandomForestClassifier(n_estimators=100)
+    model.fit(X, y)
+    joblib.dump(model, 'models/placement_rf.pkl')
+    print("Random Forest model trained and saved.")
+
 if __name__ == "__main__":
     generate_initial_data()
+    train_model()
