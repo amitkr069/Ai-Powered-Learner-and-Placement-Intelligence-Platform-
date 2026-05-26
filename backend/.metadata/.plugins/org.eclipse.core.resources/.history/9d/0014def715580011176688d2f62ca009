@@ -1,0 +1,11 @@
+spring.application.name=learner-placement-backend
+server.port=8080
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/learner_db
+spring.datasource.username=postgres
+spring.datasource.password=Ansh@1607
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+
+# Add this at the bottom of your existing properties
+jwt.secret=my_super_secret_key_for_learner_placement_platform_which_must_be_long

@@ -1,0 +1,46 @@
+package com.backend.learner_placement.services;
+
+
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+
+import com.backend.learner_placement.dtos.AuthResponse;
+import com.backend.learner_placement.dtos.LoginRequest;
+import com.backend.learner_placement.dtos.RegisterRequest;
+import com.backend.learner_placement.models.User;
+import com.backend.learner_placement.repository.UserRepository;
+
+@Service
+public class UserService {
+
+	private final UserRepository userRepository;
+	private final ModelMapper modelMapper;
+	
+	
+	public UserService(UserRepository userRepository, ModelMapper modelMapper) {
+		this.userRepository = userRepository;
+		this.modelMapper = modelMapper;
+	}
+	
+	public AuthResponse registerUser(RegisterRequest registerRequest) {
+		if(userRepository.findByEmail(registerRequest.getEmail()) != null) throw new RuntimeException("Email already exists");
+		User registerUser = modelMapper.map(registerRequest, User.class);
+		User savedUser = userRepository.save(registerUser);
+		AuthResponse authResponse = modelMapper.map(savedUser, AuthResponse.class);
+		authResponse.setMessage(savedUser.getName()+" registered");
+		return authResponse;
+	}
+	
+	public AuthResponse loginUser(LoginRequest loginRequest) {
+		User existingUser = userRepository.findByEmail(loginRequest.getEmail());
+		
+		if(existingUser != null && loginRequest.getPassword().equals(existingUser.getPassword())) {
+			AuthResponse authResponse = modelMapper.map(existingUser, AuthResponse.class);
+			authResponse.setMessage("Welcome" +existingUser.getName());
+			return authResponse;
+		}
+		else {
+			throw new RuntimeException("invalid email or password");
+		}
+	}
+}

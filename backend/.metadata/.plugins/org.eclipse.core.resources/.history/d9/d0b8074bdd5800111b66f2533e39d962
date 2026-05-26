@@ -1,0 +1,28 @@
+package com.backend.learner_placement.services;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+
+import com.backend.learner_placement.dtos.FeedbackDto;
+import com.backend.learner_placement.repository.FeedbackRepository;
+import com.backend.learner_placement.repository.LearnerRepository;
+
+@Service
+public class FeedbackService {
+
+	private LearnerRepository learnerRepository;
+	private FeedbackRepository feedbackRepository;
+	private ModelMapper modelMapper;
+	
+	public FeedbackService(LearnerRepository learnerRepository, FeedbackRepository feedbackRepository, ModelMapper modelMapper) {
+		this.feedbackRepository = feedbackRepository;
+		this.learnerRepository = learnerRepository;
+		this.modelMapper = modelMapper;
+	}
+	
+	public FeedbackDto addFeedback(FeedbackDto feedbackDto) {
+		
+		Learner learner = learnerRepository.findById(feedbackDto.getLearnerId()).
+				orElseThrow(() -> new RuntimeException("learner not found with id : "+feedbackDto.getLearnerId()));
+	}
+}

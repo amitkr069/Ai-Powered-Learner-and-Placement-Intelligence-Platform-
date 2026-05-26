@@ -1,0 +1,79 @@
+package com.backend.learner_placement.services;
+
+import java.util.function.Predicate;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+
+import com.backend.learner_placement.dtos.PredictionDto;
+import com.backend.learner_placement.exception.ResourceNotFoundException;
+import com.backend.learner_placement.models.Learner;
+import com.backend.learner_placement.models.Prediction;
+import com.backend.learner_placement.repository.LearnerRepository;
+import com.backend.learner_placement.repository.PredictionRepository;
+
+@Service
+public class PredictionService {
+
+	private PredictionRepository predictionRepository;
+	private LearnerRepository learnerRepository;
+	private ModelMapper modelMapper;
+
+	public PredictionService(PredictionRepository predictionRepository, LearnerRepository learnerRepository, ModelMapper modelMapper) {
+		this.predictionRepository = predictionRepository;
+		this.learnerRepository = learnerRepository;
+		this.modelMapper = modelMapper;
+	}
+
+	public PredictionDto savePrediction(PredictionDto predictionDto) {
+		Learner learner = learnerRepository.findById(predictionDto.getLearnerId()).
+				orElseThrow(() -> new RuntimeException("Learner not found with id : "+ predictionDto.getLearnerId()));
+		Prediction exist = predictionRepository.findByLearner_LearnerId(predictionDto.getLearnerId());
+		Prediction prediction = (exist != null) ? exist : new Prediction();
+
+		prediction.setLearner(learner);
+		prediction.setRecommendation(predictionDto.getRecommendation());
+		prediction.setReadinessScore(predictionDto.getReadinessScore());
+
+		Prediction save = predictionRepository.save(prediction);
+		PredictionDto response = modelMapper.map(save, PredictionDto.class);
+		return response; 
+
+	}
+
+	public PredictionDto getPredictionForLearner(Long learnerId) {
+
+		Prediction prediction = predictionRepository
+				.findByLearner_LearnerId(learnerId);
+
+		if (prediction == null) {
+			throw new ResourceNotFoundException(
+					"Prediction not generated yet for learner id: " + learnerId);
+		}
+
+		PredictionDto response = modelMapper.map(prediction, PredictionDto.class);
+		response.setLearnerId(prediction.getLearner().getLearnerId());
+		return response;
+	}
+
+	public PredictionDto updatePrediction(Long predictionId, PredictionDto predicitonDto) {
+
+		Prediction exist = predictionRepository.findById(predictionId).
+				orElseThrow(() -> new RuntimeException("Predcition not found with id : "+predictionId));
+
+		exist.setReadinessScore(predicitonDto.getReadinessScore());
+		exist.setRecommendation(predicitonDto.getRecommendation());
+
+		Prediction updatedPrediction = predictionRepository.save(exist);
+		PredictionDto response = modelMapper.map(updatedPrediction, PredictionDto.class);
+		return response;
+	}
+
+	public void deletePrediction(Long predictionId) {
+		Prediction exist = predictionRepository.findById(predictionId).
+				orElseThrow(() -> new RuntimeException("Predcition not found with id : "+predictionId));
+		
+		predictionRepository.delete(exist);
+
+	}
+}

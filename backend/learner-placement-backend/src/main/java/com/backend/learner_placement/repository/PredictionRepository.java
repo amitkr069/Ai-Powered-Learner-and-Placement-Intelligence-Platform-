@@ -1,0 +1,9 @@
+package com.backend.learner_placement.repository;
+
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import com.backend.learner_placement.models.Prediction;
+
+public interface PredictionRepository extends JpaRepository<Prediction, Long> {
+    Prediction findByLearner_LearnerId(Long learnerId);
+}

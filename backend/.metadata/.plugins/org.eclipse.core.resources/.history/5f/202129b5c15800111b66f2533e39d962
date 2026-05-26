@@ -1,0 +1,5 @@
+package com.backend.learner_placement.models;
+
+public class Assessment {
+
+}

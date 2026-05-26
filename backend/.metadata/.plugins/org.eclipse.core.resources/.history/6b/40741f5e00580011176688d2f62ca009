@@ -1,0 +1,8 @@
+spring.application.name=learner-placement-backend
+server.port=8080
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/learner_db
+spring.datasource.username=postgres
+spring.datasource.password=Ansh@1607
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true

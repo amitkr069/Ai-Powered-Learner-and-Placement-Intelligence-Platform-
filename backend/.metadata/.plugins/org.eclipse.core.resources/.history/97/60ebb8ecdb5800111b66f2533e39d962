@@ -1,0 +1,5 @@
+package com.backend.learner_placement.repository;
+
+public interface PredictionRepository {
+
+}

@@ -1,0 +1,5 @@
+package com.backend.learner_placement.exception;
+
+public class GlobalExceptionHandler {
+
+}

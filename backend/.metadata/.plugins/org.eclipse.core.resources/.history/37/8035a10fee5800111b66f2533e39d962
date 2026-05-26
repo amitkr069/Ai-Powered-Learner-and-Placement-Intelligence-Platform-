@@ -1,0 +1,78 @@
+package com.backend.learner_placement.services;
+
+import java.util.List;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+
+import com.backend.learner_placement.dtos.FeedbackDto;
+import com.backend.learner_placement.exception.ResourceNotFoundException;
+import com.backend.learner_placement.models.Feedback;
+import com.backend.learner_placement.models.Learner;
+import com.backend.learner_placement.repository.FeedbackRepository;
+import com.backend.learner_placement.repository.LearnerRepository;
+
+@Service
+public class FeedbackService {
+
+	private LearnerRepository learnerRepository;
+	private FeedbackRepository feedbackRepository;
+	private ModelMapper modelMapper;
+	
+	public FeedbackService(LearnerRepository learnerRepository, FeedbackRepository feedbackRepository, ModelMapper modelMapper) {
+		this.feedbackRepository = feedbackRepository;
+		this.learnerRepository = learnerRepository;
+		this.modelMapper = modelMapper;
+	}
+	
+	public FeedbackDto addFeedback(FeedbackDto feedbackDto) {
+		
+		Learner learner = learnerRepository.findById(feedbackDto.getLearnerId()).
+				orElseThrow(() -> new RuntimeException("learner not found with id : "+feedbackDto.getLearnerId()));
+		
+		Feedback feedback = modelMapper.map(feedbackDto, Feedback.class); 
+		feedback.setLearner(learner);
+		
+		Feedback saved = feedbackRepository.save(feedback);
+		FeedbackDto response = modelMapper.map(saved, FeedbackDto.class);
+		response.setLearnerId(learner.getLearnerId());
+		return response; 
+	}
+	
+	public List<FeedbackDto> getFeedbackForLearner(Long learnerId) {
+		
+	    List<Feedback> feedbackList =
+	            feedbackRepository.findByLearner_LearnerId(learnerId);
+
+	    if (feedbackList.isEmpty()) {
+	        throw new ResourceNotFoundException(
+	                "No feedback found for learner id: " + learnerId);
+	    }
+
+	    return feedbackList.stream()
+	            .map(f -> {
+	                FeedbackDto dto = modelMapper.map(f, FeedbackDto.class);
+	                dto.setLearnerId(f.getLearner().getLearnerId());
+	                return dto;
+	            })
+	            .toList();
+	}
+	
+	public FeedbackDto updateFeedback(Long feedbackId, FeedbackDto feedbackDto) {
+		
+		Feedback exist = feedbackRepository.findById(feedbackId).
+				orElseThrow(() -> new RuntimeException("Feedback not found with id : "+feedbackId));
+		
+		exist.setComments(feedbackDto.getComments());
+		Feedback updatedFeedback = feedbackRepository.save(exist);
+		FeedbackDto response = modelMapper.map(updatedFeedback, FeedbackDto.class);
+		return response;
+	}
+	
+	public void deleteFeedback(Long feedbackId) {
+		
+		Feedback feedback = feedbackRepository.findById(feedbackId).
+				orElseThrow(() -> new RuntimeException("Feedback not found with if : "+feedbackId));
+		feedbackRepository.delete(feedback);
+	}
+}

@@ -1,0 +1,59 @@
+package com.backend.learner_placement.services;
+
+
+import org.modelmapper.ModelMapper;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.stereotype.Service;
+
+import com.backend.learner_placement.dtos.AuthResponse;
+import com.backend.learner_placement.dtos.LoginRequest;
+import com.backend.learner_placement.dtos.RegisterRequest;
+import com.backend.learner_placement.models.User;
+import com.backend.learner_placement.repository.UserRepository;
+import com.backend.learner_placement.security.JwtUtil;
+
+@Service
+public class UserService {
+
+	private final UserRepository userRepository;
+	private final ModelMapper modelMapper;
+	private JwtUtil jwtUtil;
+	private AuthenticationManager authenticationManager;
+	
+	
+	public UserService(UserRepository userRepository, ModelMapper modelMapper,JwtUtil jwtUtil,AuthenticationManager authenticationManager) {
+		this.userRepository = userRepository;
+		this.modelMapper = modelMapper;
+		this.authenticationManager = authenticationManager;
+		this.jwtUtil = jwtUtil;
+	}
+	
+	public AuthResponse registerUser(RegisterRequest registerRequest) {
+		if(userRepository.findByEmail(registerRequest.getEmail()) != null) throw new RuntimeException("Email already exists");
+		User registerUser = modelMapper.map(registerRequest, User.class);
+		User savedUser = userRepository.save(registerUser);
+		AuthResponse authResponse = modelMapper.map(savedUser, AuthResponse.class);
+		authResponse.setMessage("registered successfuly");
+		return authResponse;
+	}
+	
+	public AuthResponse loginUser(LoginRequest request) {
+	    try {
+	        authenticationManager.authenticate(
+	                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+	        );
+	    } catch (Exception ex) {
+	        throw new RuntimeException("Invalid email or password!");
+	    }
+
+	    User existingUser = userRepository.findByEmail(request.getEmail());
+	    String token = jwtUtil.generateToken(existingUser.getEmail());
+
+	    AuthResponse response = modelMapper.map(existingUser, AuthResponse.class);
+	    response.setMessage("Login successful!");
+	    response.setToken(token); 
+	    
+	    return response;
+	}
+}

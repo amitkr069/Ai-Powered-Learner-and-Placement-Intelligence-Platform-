@@ -1,0 +1,44 @@
+package com.backend.learner_placement.controller;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.backend.learner_placement.models.User;
+import com.backend.learner_placement.repository.UserRepository;
+
+@RestController
+@RequestMapping("/auth")
+public class AuthController {
+	
+	private final UserRepository userRepository; 
+	
+	public AuthController(UserRepository userRepository) {
+		this.userRepository = userRepository;
+	}
+	
+	@PostMapping("/register")
+	public ResponseEntity<String> registerUser(@RequestBody User user) {
+		if(userRepository.findByEmail(user.getEmail()) != null) return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
+		userRepository.save(user);
+		return ResponseEntity.status(HttpStatus.CREATED).body("User " + user.getName()+ " saved successfully");
+	}
+	
+	@PostMapping("/login")
+	public ResponseEntity<String> loginUser(@RequestBody User loginUser) {
+		
+		User existUser = userRepository.findByEmail(loginUser.getEmail());
+		if(existUser != null  && existUser.getPassword().equals(loginUser.getPassword())) {
+			return ResponseEntity.status(HttpStatus.OK).body("User "+loginUser.getName()+" logged in successfully");
+		}
+		
+		else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Username or password invalid");
+		}
+		
+	}
+}

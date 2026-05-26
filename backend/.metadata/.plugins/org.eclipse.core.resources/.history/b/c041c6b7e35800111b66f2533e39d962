@@ -1,0 +1,17 @@
+package com.backend.learner_placement.controller;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.backend.learner_placement.repository.FeedbackRepository;
+
+@RestController
+@RequestMapping("/api/feedback")
+public class FeedbackController {
+
+	private FeedbackRepository feedbackRepository;
+	
+	public FeedbackController(FeedbackRepository feedbackRepository) {
+		this.feedbackRepository = feedbackRepository;
+	}
+}

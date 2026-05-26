@@ -1,0 +1,23 @@
+package com.backend.learner_placement.services;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+
+import com.backend.learner_placement.repository.AssessmentRepository;
+import com.backend.learner_placement.repository.LearnerRepository;
+
+@Service
+public class AssessmentService {
+
+	private AssessmentRepository assessmentRepositroy;
+	private LearnerRepository learnerRepository;
+	private ModelMapper modelMapper;
+	
+	public AssessmentService(AssessmentRepository assessmentRepositroy, LearnerRepository learnerRepository, ModelMapper modelMapper) {
+		this.assessmentRepositroy = assessmentRepositroy;
+		this.learnerRepository = learnerRepository;
+		this.modelMapper = modelMapper;
+	}
+	
+	
+}
