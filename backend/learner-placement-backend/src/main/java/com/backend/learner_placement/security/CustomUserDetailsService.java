@@ -1,6 +1,7 @@
 package com.backend.learner_placement.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -10,6 +11,7 @@ import com.backend.learner_placement.models.User;
 import com.backend.learner_placement.repository.UserRepository;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -23,6 +25,16 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("User not found with email: " + email);
         }
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), new ArrayList<>());
+        
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        if (user.getRole() != null) {
+            String roleName = user.getRole().toUpperCase();
+            if (!roleName.startsWith("ROLE_")) {
+                roleName = "ROLE_" + roleName;
+            }
+            authorities.add(new SimpleGrantedAuthority(roleName));
+        }
+        
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities);
     }
 }
