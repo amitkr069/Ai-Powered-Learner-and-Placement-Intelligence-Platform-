@@ -37,7 +37,7 @@ public class PredictionController {
 	}
 	
 	@PreAuthorize("hasRole('ADMIN')")
-	@PutMapping("/{predcitionId}")
+	@PutMapping("/{predictionId}")
 	public ResponseEntity<PredictionDto> updatePrediction(@PathVariable Long predictionId, @RequestBody PredictionDto predictionDto){
 		return ResponseEntity.ok(predictionService.updatePrediction(predictionId, predictionDto));
 	}

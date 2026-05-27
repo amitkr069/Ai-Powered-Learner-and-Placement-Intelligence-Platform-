@@ -37,12 +37,13 @@ public PredictionDto generateAndSavePrediction(Long learnerId) {
 				orElseThrow(() -> new RuntimeException("Learner not found with id : " + learnerId));
 		
 		Map<String, Object> requestBody = new HashMap<>();
-		requestBody.put("codingScore", learner.getCodingScore());
-		requestBody.put("aptitudeScore", learner.getAptitudeScore());
-		requestBody.put("attendance", learner.getAttendance());
-		requestBody.put("communicationScore", learner.getCommunicationScore());
+		requestBody.put("codingScore", learner.getCodingScore() != null ? learner.getCodingScore() : 0);
+		requestBody.put("aptitudeScore", learner.getAptitudeScore() != null ? learner.getAptitudeScore() : 0);
+		requestBody.put("attendance", learner.getAttendance() != null ? learner.getAttendance() : 0);
+		requestBody.put("communicationScore", learner.getCommunicationScore() != null ? learner.getCommunicationScore() : 0);
 
-		PredictionDto responseFromPython = restTemplate.postForObject(PYTHON_API_URL, requestBody, PredictionDto.class);
+		String targetUrl = PYTHON_API_URL + "/" + learnerId;
+		PredictionDto responseFromPython = restTemplate.postForObject(targetUrl, requestBody, PredictionDto.class);
 
 		if (responseFromPython == null) {
 			throw new RuntimeException("Failed to get response from Python ML API");
