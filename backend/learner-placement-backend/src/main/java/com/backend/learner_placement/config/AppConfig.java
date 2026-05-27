@@ -10,7 +10,10 @@ public class AppConfig {
 
     @Bean
     public ModelMapper modelMapper() {
-        return new ModelMapper();
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration()
+            .setMatchingStrategy(org.modelmapper.convention.MatchingStrategies.STRICT);
+        return modelMapper;
     }
     @Bean
     public RestTemplate restTemplate() {
