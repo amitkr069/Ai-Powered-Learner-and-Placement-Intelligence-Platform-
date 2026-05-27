@@ -1,7 +1,11 @@
 package com.backend.learner_placement.services;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.backend.learner_placement.dtos.PredictionDto;
 import com.backend.learner_placement.exception.ResourceNotFoundException;
@@ -16,28 +20,45 @@ public class PredictionService {
 	private PredictionRepository predictionRepository;
 	private LearnerRepository learnerRepository;
 	private ModelMapper modelMapper;
+	private final RestTemplate restTemplate; 
 
-	public PredictionService(PredictionRepository predictionRepository, LearnerRepository learnerRepository, ModelMapper modelMapper) {
+	private final String PYTHON_API_URL = "http://localhost:8000/predict";
+	
+	public PredictionService(PredictionRepository predictionRepository, LearnerRepository learnerRepository, ModelMapper modelMapper, RestTemplate restTemplate) {
 		this.predictionRepository = predictionRepository;
 		this.learnerRepository = learnerRepository;
 		this.modelMapper = modelMapper;
+		this.restTemplate = restTemplate;
 	}
 
-	public PredictionDto savePrediction(PredictionDto predictionDto) {
+public PredictionDto generateAndSavePrediction(Long learnerId) {
 		
-		Learner learner = learnerRepository.findById(predictionDto.getLearnerId()).
-				orElseThrow(() -> new RuntimeException("Learner not found with id : "+ predictionDto.getLearnerId()));
-		Prediction exist = predictionRepository.findByLearner_LearnerId(predictionDto.getLearnerId());
+		Learner learner = learnerRepository.findById(learnerId).
+				orElseThrow(() -> new RuntimeException("Learner not found with id : " + learnerId));
+		
+		Map<String, Object> requestBody = new HashMap<>();
+		requestBody.put("codingScore", learner.getCodingScore());
+		requestBody.put("aptitudeScore", learner.getAptitudeScore());
+		requestBody.put("attendance", learner.getAttendance());
+		requestBody.put("communicationScore", learner.getCommunicationScore());
+
+		PredictionDto responseFromPython = restTemplate.postForObject(PYTHON_API_URL, requestBody, PredictionDto.class);
+
+		if (responseFromPython == null) {
+			throw new RuntimeException("Failed to get response from Python ML API");
+		}
+
+		Prediction exist = predictionRepository.findByLearner_LearnerId(learnerId);
 		Prediction prediction = (exist != null) ? exist : new Prediction();
 
 		prediction.setLearner(learner);
-		prediction.setRecommendation(predictionDto.getRecommendation());
-		prediction.setReadinessScore(predictionDto.getReadinessScore());
+		prediction.setRecommendation(responseFromPython.getRecommendation());
+		prediction.setReadinessScore(responseFromPython.getReadinessScore());
 
-		Prediction save = predictionRepository.save(prediction);
-		PredictionDto response = modelMapper.map(save, PredictionDto.class);
-		return response; 
-
+		Prediction saved = predictionRepository.save(prediction);
+		PredictionDto response = modelMapper.map(saved, PredictionDto.class);
+		response.setLearnerId(learner.getLearnerId());
+		return response;
 	}
 
 	public PredictionDto getPredictionForLearner(Long learnerId) {

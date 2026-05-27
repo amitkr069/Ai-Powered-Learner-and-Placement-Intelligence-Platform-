@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.learner_placement.dtos.LearnerDto;
 import com.backend.learner_placement.services.LearnerService;
@@ -26,6 +28,12 @@ public class LearnerController {
 	public LearnerController(LearnerService learnerService) {
 		this.learnerService= learnerService;
 	}
+	
+	@PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadLearnersCsv(@RequestParam("file") MultipartFile file) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(learnerService.saveLearnersFromCsv(file));
+    }
 	
 	//Creating learner
 	@PreAuthorize("hasRole('ADMIN')")

@@ -26,11 +26,11 @@ public class PredictionController {
 	}
 	
 	@PreAuthorize("hasRole('ADMIN')")
-	@PostMapping
-	public ResponseEntity<PredictionDto> savePrediciton(@RequestBody PredictionDto predictionDto){
-		return ResponseEntity.status(HttpStatus.CREATED).body(predictionService.savePrediction(predictionDto));
+	@PostMapping("/{learnerId}")
+	public ResponseEntity<PredictionDto> savePrediciton(@PathVariable Long learnerId){
+		return ResponseEntity.status(HttpStatus.CREATED).body(predictionService.generateAndSavePrediction(learnerId));
 	}
-	
+	 
 	@GetMapping("/learner/{learnerId}")
 	public ResponseEntity<PredictionDto> getPredictionById(@PathVariable Long learnerId){
 		return ResponseEntity.status(HttpStatus.CREATED).body(predictionService.getPredictionForLearner(learnerId)); 
