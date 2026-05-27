@@ -24,6 +24,7 @@
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from typing import Optional
 import pandas as pd
 import joblib
 import os
@@ -39,10 +40,10 @@ CONFIG = {"mode": "ML"}
 #     communication: int
 
 class PredictionInput(BaseModel):
-    attendance: int
-    codingScore: int
-    communicationScore: int
-    aptitudeScore: int  
+    attendance: Optional[int] = 0
+    codingScore: Optional[int] = 0
+    communicationScore: Optional[int] = 0
+    aptitudeScore: Optional[int] = 0
 
 # --- ETL PROCESS ---
 @app.post("/etl/process")
