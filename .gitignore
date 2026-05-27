@@ -22,5 +22,10 @@ buildNumber.properties
 .DS_Store
 Thumbs.db
 
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
 # Custom Secret Files (Optional but good practice)
 # application-secret.properties
