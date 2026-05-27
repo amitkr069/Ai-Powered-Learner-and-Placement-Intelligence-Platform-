@@ -40,9 +40,9 @@ CONFIG = {"mode": "ML"}
 
 class PredictionInput(BaseModel):
     attendance: int
-    coding: int
-    communication: int
-    aptitude: int  
+    codingScore: int
+    communicationScore: int
+    aptitudeScore: int  
 
 # --- ETL PROCESS ---
 @app.post("/etl/process")
@@ -68,23 +68,23 @@ def get_batch():
 @app.post("/predict/{learnerId}")
 def predict_placement(learnerId: int, data: PredictionInput):
     if CONFIG["mode"] == "RULE_BASED":
-        # Rule-based logic
-        if data.attendance > 80 and data.coding > 70 and data.communication > 70:
-            return {"placement_probability": 90, "status": "Placement Ready"}
-        elif 60 <= data.attendance <= 80 and 50 <= data.coding <= 70 and 50 <= data.communication <= 70:
-            return {"placement_probability": 65, "status": "Moderate"}
+        # Rule-based logic (Updated to use new variable names)
+        if data.attendance > 80 and data.codingScore > 70 and data.communicationScore > 70:
+            return {"readinessScore": 90, "recommendation": "Placement Ready"}
+        elif 60 <= data.attendance <= 80 and 50 <= data.codingScore <= 70 and 50 <= data.communicationScore <= 70:
+            return {"readinessScore": 65, "recommendation": "Moderate"}
         else:
-            return {"placement_probability": 30, "status": "High Risk"}
-
+            return {"readinessScore": 30, "recommendation": "High Risk"}
+ 
     else:
         # ML-based logic
         model = joblib.load('models/placement_rf.pkl')
-
-        features = [[data.coding, data.aptitude, data.communication]] # Using dummy aptitude of 75
-
-
+ 
+        # Updated to use new variable names
+        features = [[data.codingScore, data.aptitudeScore, data.communicationScore]]
+ 
         probabilities = model.predict_proba(features)[0]
-
+ 
         ready_probability = int(probabilities[1] * 100)
         if ready_probability >= 70:
             status = "Placement Ready"
@@ -92,10 +92,11 @@ def predict_placement(learnerId: int, data: PredictionInput):
             status = "Moderate"
         else:
             status = "High Risk"
-
+ 
+        # Updated return format to match Spring Boot DTO
         return {
-            "placement_probability": ready_probability,
-            "status": status
+            "readinessScore": ready_probability,
+            "recommendation": status
         }
 
 @app.get("/analytics/weak-learners")
