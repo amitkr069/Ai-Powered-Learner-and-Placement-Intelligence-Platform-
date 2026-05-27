@@ -38,13 +38,22 @@ def generate_initial_data():
 
 def train_model():
     df = pd.read_csv('data/learner_scores.csv')
-    y = ((df['coding_score'] > 70) & (df['communication_score'] > 70)).astype(int)
+    
+    # Calculate a composite score instead of hard cutoffs
+    # Give different weights to different skills
+    composite_score = (df['coding_score'] * 0.5) + (df['aptitude_score'] * 0.25) + (df['communication_score'] * 0.25)
+    
+    # Target label: 1 if composite score > 65, else 0
+    y = (composite_score > 65).astype(int) 
+    
     X = df[['coding_score', 'aptitude_score', 'communication_score']]
     
-    model = RandomForestClassifier(n_estimators=100)
+    model = RandomForestClassifier(n_estimators=100, max_depth=5) # Added max_depth to prevent perfect memorization
     model.fit(X, y)
+    
     joblib.dump(model, 'models/placement_rf.pkl')
-    print("Random Forest model trained and saved.")
+    print("Model retrained with softer boundaries.")
+
 
 if __name__ == "__main__":
     generate_initial_data()
