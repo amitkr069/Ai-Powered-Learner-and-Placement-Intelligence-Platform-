@@ -8,7 +8,8 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
-    if (token) {
+    // Only attach the Authorization header if there is a token and it is not an authentication request
+    if (token && config.url && !config.url.includes("/auth/")) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
