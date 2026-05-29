@@ -113,6 +113,21 @@ function Login() {
         >
           {loading ? "Authenticating..." : "Login"}
         </button>
+
+        <p style={{ textAlign: "center", fontSize: "14px", color: "var(--text2)", marginTop: "20px" }}>
+          Don't have an account?{" "}
+          <span
+            onClick={() => !loading && navigate("/signup")}
+            style={{
+              color: "var(--primary)",
+              cursor: "pointer",
+              fontWeight: "600",
+              textDecoration: "underline"
+            }}
+          >
+            Sign Up
+          </span>
+        </p>
       </form>
     </div>
   );

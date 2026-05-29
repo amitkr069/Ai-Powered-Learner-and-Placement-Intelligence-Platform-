@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import AdminDashboard from "./pages/AdminDashboard";
 import AddLearner from "./pages/AddLearner";
 import CsvUpload from "./pages/CsvUpload";
@@ -32,6 +33,7 @@ function App() {
       <Routes>
         {/* Public Login Route */}
         <Route path="/" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
 
         {/* Admin Dashboard Protected Routes */}
         <Route
