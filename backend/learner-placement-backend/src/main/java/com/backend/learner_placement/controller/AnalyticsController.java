@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/analytics")
-@PreAuthorize("hasAnyAuthority('ADMIN', 'MENTOR')")
+@PreAuthorize("hasAnyRole('ADMIN', 'MENTOR')")
 public class AnalyticsController {
 
     private final AnalyticsService analyticsService;
