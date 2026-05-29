@@ -1,9 +1,17 @@
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
+import { io } from "socket.io-client";
+
+// Global socket connection to prevent reconnects on re-renders
+const socket = io("http://localhost:3001", { autoConnect: false });
 
 function Notifications() {
-  const role = localStorage.getItem("role");
+  const role = localStorage.getItem("role") || "";
+  const userId = role === "MENTOR" ? localStorage.getItem("mentorId") : localStorage.getItem("id");
 
-  // Dynamic notifications based on role
+  const [liveNotifications, setLiveNotifications] = useState([]);
+
+  // Static fallback notifications as requested
   const adminNotifications = [
     {
       title: "Placement Model Ready",
@@ -28,14 +36,7 @@ function Notifications() {
     }
   ];
 
-  const mentorNotifications = [
-    {
-      title: "System Ready",
-      description: "Mentor portals and Assessment logging APIs active and bound to database.",
-      time: "Just now",
-      badge: "badge-green",
-      status: "Online"
-    },
+  const initialMentorNotifications = [
     {
       title: "Assessment metrics loaded",
       description: "Logged test scores have successfully refreshed in the placement analytics registry.",
@@ -52,14 +53,7 @@ function Notifications() {
     }
   ];
 
-  const learnerNotifications = [
-    {
-      title: "Placement Readiness Predicted",
-      description: "AI-based placement readiness models successfully predicted your potential placement status.",
-      time: "Just now",
-      badge: "badge-green",
-      status: "Calculated"
-    },
+  const initialLearnerNotifications = [
     {
       title: "Scores Updated",
       description: "Your mentor has updated your attendance and assessment scores.",
@@ -76,12 +70,34 @@ function Notifications() {
     }
   ];
 
-  const activeNotifications = 
-    role === "ADMIN" 
-      ? adminNotifications 
-      : role === "MENTOR" 
-        ? mentorNotifications 
-        : learnerNotifications;
+  useEffect(() => {
+    // Initialize state with static history for non-admins
+    if (role === "MENTOR") setLiveNotifications(initialMentorNotifications);
+    if (role === "LEARNER") setLiveNotifications(initialLearnerNotifications);
+
+    // Admin stays static, no socket connection needed
+    if (role === "ADMIN") return;
+
+    // Connect socket for Mentors and Learners
+    socket.connect();
+
+    socket.on("connect", () => {
+      console.log("Connected to notification service");
+      socket.emit("register", { role, id: userId });
+    });
+
+    socket.on("notification", (newNotif) => {
+      setLiveNotifications((prev) => [newNotif, ...prev]);
+    });
+
+    return () => {
+      socket.off("connect");
+      socket.off("notification");
+      socket.disconnect();
+    };
+  }, [role, userId]);
+
+  const activeNotifications = role === "ADMIN" ? adminNotifications : liveNotifications;
 
   return (
     <>
@@ -91,6 +107,7 @@ function Notifications() {
         <div className="section-title">Timeline Notifications</div>
         <div className="section-sub">
           Dynamic notifications and system logs for the LearnerIQ Platform
+          {role !== "ADMIN" && <span style={{color:"#00e38c", marginLeft:"10px"}}>● Live</span>}
         </div>
 
         <div className="card" style={{ padding: "0" }}>
