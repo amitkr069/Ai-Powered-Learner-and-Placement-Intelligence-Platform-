@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import AdminDashboard from "./pages/AdminDashboard";
-import AddLearner from "./pages/AddLearner";
+import AddMentor from "./pages/AddMentor";
 import CsvUpload from "./pages/CsvUpload";
 import MentorDashboard from "./pages/MentorDashboard";
 import Assessment from "./pages/Assessment";
@@ -12,14 +12,12 @@ import Analytics from "./pages/Analytics";
 import Notifications from "./pages/Notifications";
 import LearnerDashboard from "./pages/LearnerDashboard";
 
-// Protected Route Component for Access Control
+// Protected Route Component
 function ProtectedRoute({ children, allowedRoles }) {
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
-  if (!token) {
-    return <Navigate to="/" replace />;
-  }
+  if (!token) return <Navigate to="/" replace />;
 
   if (allowedRoles && !allowedRoles.includes(role)) {
     if (role === "ADMIN") return <Navigate to="/admin" replace />;
@@ -35,81 +33,34 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public Login Route */}
+        {/* Public Routes */}
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        {/* Admin Dashboard Protected Routes */}
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute allowedRoles={["ADMIN"]}>
-              <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/add-learner"
-          element={
-            <ProtectedRoute allowedRoles={["ADMIN"]}>
-              <AddLearner />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/csv-upload"
-          element={
-            <ProtectedRoute allowedRoles={["ADMIN"]}>
-              <CsvUpload />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/prediction"
-          element={
-            <ProtectedRoute allowedRoles={["ADMIN"]}>
-              <Prediction />
-            </ProtectedRoute>
-          }
-        />
+        {/* Admin Routes */}
+        <Route path="/admin" element={<ProtectedRoute allowedRoles={["ADMIN"]}><AdminDashboard /></ProtectedRoute>} />
+        <Route path="/add-mentor" element={<ProtectedRoute allowedRoles={["ADMIN"]}><AddMentor /></ProtectedRoute>} />
+        <Route path="/csv-upload" element={<ProtectedRoute allowedRoles={["ADMIN"]}><CsvUpload /></ProtectedRoute>} />
+        <Route path="/prediction" element={<ProtectedRoute allowedRoles={["ADMIN"]}><Prediction /></ProtectedRoute>} />
 
-        {/* Mentor Protected Routes */}
-        <Route
-          path="/mentor"
-          element={
-            <ProtectedRoute allowedRoles={["MENTOR"]}>
-              <MentorDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/assessment"
-          element={
-            <ProtectedRoute allowedRoles={["MENTOR"]}>
-              <Assessment />
-            </ProtectedRoute>
-          }
-        />
+        {/* Mentor Routes */}
+        <Route path="/mentor" element={<ProtectedRoute allowedRoles={["MENTOR"]}><MentorDashboard /></ProtectedRoute>} />
+        <Route path="/assessment" element={<ProtectedRoute allowedRoles={["MENTOR"]}><Assessment /></ProtectedRoute>} />
 
-        {/* Learner Protected Routes */}
-        <Route
-          path="/learner"
-          element={
-            <ProtectedRoute allowedRoles={["LEARNER"]}>
-              <LearnerDashboard />
-            </ProtectedRoute>
-          }
-        />
+        {/* Learner Routes */}
+        <Route path="/learner" element={<ProtectedRoute allowedRoles={["LEARNER"]}><LearnerDashboard /></ProtectedRoute>} />
 
-        {/* Common Shared Protected Routes */}
+        {/* Analytics — Admin and Mentor ONLY (not Learner) */}
         <Route
           path="/analytics"
           element={
-            <ProtectedRoute allowedRoles={["ADMIN", "MENTOR", "LEARNER"]}>
+            <ProtectedRoute allowedRoles={["ADMIN", "MENTOR"]}>
               <Analytics />
             </ProtectedRoute>
           }
         />
+
+        {/* Notifications — all roles */}
         <Route
           path="/notifications"
           element={
@@ -119,7 +70,7 @@ function App() {
           }
         />
 
-        {/* Catch-all Redirect */}
+        {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

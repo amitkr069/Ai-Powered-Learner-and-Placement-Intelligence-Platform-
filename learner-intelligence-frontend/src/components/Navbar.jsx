@@ -11,55 +11,46 @@ function Navbar() {
     localStorage.removeItem("email");
     localStorage.removeItem("id");
     localStorage.removeItem("userId");
+    localStorage.removeItem("mentorId");
     navigate("/", { replace: true });
   };
 
   return (
     <nav className="nav">
-      <div className="nav-brand" style={{ cursor: "pointer" }} onClick={() => navigate(role === "ADMIN" ? "/admin" : role === "MENTOR" ? "/mentor" : "/learner")}>
+      <div
+        className="nav-brand"
+        style={{ cursor: "pointer" }}
+        onClick={() => navigate(role === "ADMIN" ? "/admin" : role === "MENTOR" ? "/mentor" : "/learner")}
+      >
         Learner<span>IQ</span>
       </div>
 
       {role === "ADMIN" && (
         <>
-          <Link className="tab" to="/admin">
-            Dashboard
-          </Link>
-          <Link className="tab" to="/add-learner">
-            Add Learner
-          </Link>
-          <Link className="tab" to="/csv-upload">
-            CSV Upload
-          </Link>
-          <Link className="tab" to="/prediction">
-            Prediction
-          </Link>
+          <Link className="tab" to="/admin">Dashboard</Link>
+          <Link className="tab" to="/add-mentor">Add Mentor</Link>
+          <Link className="tab" to="/csv-upload">CSV Upload</Link>
+          <Link className="tab" to="/prediction">Prediction</Link>
+          <Link className="tab" to="/analytics">Analytics</Link>
         </>
       )}
 
       {role === "MENTOR" && (
         <>
-          <Link className="tab" to="/mentor">
-            Mentor Dashboard
-          </Link>
-          <Link className="tab" to="/assessment">
-            Assessment
-          </Link>
+          <Link className="tab" to="/mentor">My Dashboard</Link>
+          <Link className="tab" to="/assessment">Assessment</Link>
+          <Link className="tab" to="/analytics">Analytics</Link>
         </>
       )}
 
       {role === "LEARNER" && (
-        <Link className="tab" to="/learner">
-          Learner Dashboard
-        </Link>
+        <>
+          <Link className="tab" to="/learner">My Dashboard</Link>
+          {/* No Analytics link for learners */}
+        </>
       )}
 
-      <Link className="tab" to="/analytics">
-        Analytics
-      </Link>
-      <Link className="tab" to="/notifications">
-        Notifications
-      </Link>
+      <Link className="tab" to="/notifications">Notifications</Link>
 
       <button
         onClick={handleLogout}

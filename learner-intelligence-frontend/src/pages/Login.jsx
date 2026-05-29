@@ -9,7 +9,6 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Clear stale session items when user visits the login screen
   useEffect(() => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
@@ -17,6 +16,7 @@ function Login() {
     localStorage.removeItem("email");
     localStorage.removeItem("id");
     localStorage.removeItem("userId");
+    localStorage.removeItem("mentorId");
   }, []);
 
   const handleLogin = async (e) => {
@@ -31,13 +31,10 @@ function Login() {
 
     try {
       const response = await api.post("/auth/login", { email, password });
-      const { token, role, name, email: userEmail, id } = response.data;
+      const { token, role, name, email: userEmail, id, mentorId } = response.data;
 
-      if (!token) {
-        throw new Error("Authentication failed: No token returned.");
-      }
+      if (!token) throw new Error("Authentication failed: No token returned.");
 
-      // Store in localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("role", role.toUpperCase());
       localStorage.setItem("name", name || "");
@@ -45,7 +42,11 @@ function Login() {
       localStorage.setItem("id", id || "");
       localStorage.setItem("userId", id || "");
 
-      // Redirect depending on user role
+      // Store mentorId for mentor role — used by dashboard and analytics
+      if (mentorId) {
+        localStorage.setItem("mentorId", mentorId);
+      }
+
       if (role.toUpperCase() === "ADMIN") {
         navigate("/admin", { replace: true });
       } else if (role.toUpperCase() === "MENTOR") {
@@ -58,8 +59,8 @@ function Login() {
     } catch (err) {
       console.error(err);
       setError(
-        err.response?.data?.message || 
-        err.response?.data || 
+        err.response?.data?.message ||
+        err.response?.data ||
         "Invalid email or password!"
       );
     } finally {
@@ -100,7 +101,7 @@ function Login() {
           <input
             className="form-input"
             type="email"
-            placeholder="admin@example.com"
+            placeholder="your@email.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
@@ -129,7 +130,7 @@ function Login() {
         </button>
 
         <p style={{ textAlign: "center", fontSize: "14px", color: "var(--text2)", marginTop: "20px" }}>
-          Don't have an account?{" "}
+          New learner?{" "}
           <span
             onClick={() => !loading && navigate("/signup")}
             style={{
@@ -139,7 +140,7 @@ function Login() {
               textDecoration: "underline"
             }}
           >
-            Sign Up
+            Register Here
           </span>
         </p>
       </form>

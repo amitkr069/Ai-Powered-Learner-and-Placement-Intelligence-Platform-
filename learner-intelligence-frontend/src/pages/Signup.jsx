@@ -6,17 +6,15 @@ function Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("LEARNER");
-  
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
-  
+
   const navigate = useNavigate();
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    if (!name || !email || !password || !role) {
+    if (!name || !email || !password) {
       setError("Please fill in all fields.");
       return;
     }
@@ -26,21 +24,12 @@ function Signup() {
     setSuccess("");
 
     try {
-      await api.post("/auth/register", {
-        name,
-        email,
-        password,
-        role: role.toUpperCase()
-      });
-
-      setSuccess("Account registered successfully! Redirecting to Login page...");
+      await api.post("/auth/register", { name, email, password });
+      setSuccess("Account registered successfully! Redirecting to login...");
       setName("");
       setEmail("");
       setPassword("");
-      
-      setTimeout(() => {
-        navigate("/", { replace: true });
-      }, 2000);
+      setTimeout(() => navigate("/", { replace: true }), 2000);
     } catch (err) {
       console.error(err);
       setError(
@@ -61,7 +50,22 @@ function Signup() {
         </div>
 
         <div className="login-tagline">
-          Create AI Powered Intelligence Account
+          Create Your Learner Account
+        </div>
+
+        <div
+          style={{
+            background: "rgba(108, 99, 255, 0.08)",
+            border: "1px solid rgba(108, 99, 255, 0.25)",
+            borderRadius: "8px",
+            padding: "10px 14px",
+            marginBottom: "20px",
+            fontSize: "13px",
+            color: "var(--text2)",
+            textAlign: "center"
+          }}
+        >
+          🎓 Learner registration only — Admins & Mentors are added by the platform
         </div>
 
         {error && (
@@ -106,7 +110,7 @@ function Signup() {
             placeholder="John Doe"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            disabled={loading || success}
+            disabled={loading || !!success}
             required
           />
         </div>
@@ -119,7 +123,7 @@ function Signup() {
             placeholder="john@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            disabled={loading || success}
+            disabled={loading || !!success}
             required
           />
         </div>
@@ -129,35 +133,21 @@ function Signup() {
           <input
             className="form-input"
             type="password"
-            placeholder="******"
+            placeholder="Min. 6 characters"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            disabled={loading || success}
+            disabled={loading || !!success}
             required
           />
-        </div>
-
-        <div className="form-row">
-          <label>Select User Role *</label>
-          <select
-            className="form-select"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            disabled={loading || success}
-          >
-            <option value="LEARNER">Learner (View Profile, Scores & Placement Readiness)</option>
-            <option value="MENTOR">Mentor (Logging & Assessment)</option>
-            <option value="ADMIN">Admin (ML Predictions & Registry)</option>
-          </select>
         </div>
 
         <button
           className="btn btn-primary"
           type="submit"
           style={{ width: "100%", marginTop: "16px", marginBottom: "16px" }}
-          disabled={loading || success}
+          disabled={loading || !!success}
         >
-          {loading ? "Registering..." : "Create Account"}
+          {loading ? "Registering..." : "Create Learner Account"}
         </button>
 
         <p style={{ textAlign: "center", fontSize: "14px", color: "var(--text2)" }}>
