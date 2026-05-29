@@ -16,7 +16,7 @@ function Navbar() {
 
   return (
     <nav className="nav">
-      <div className="nav-brand" style={{ cursor: "pointer" }} onClick={() => navigate(role === "ADMIN" ? "/admin" : "/mentor")}>
+      <div className="nav-brand" style={{ cursor: "pointer" }} onClick={() => navigate(role === "ADMIN" ? "/admin" : role === "MENTOR" ? "/mentor" : "/learner")}>
         Learner<span>IQ</span>
       </div>
 
@@ -46,6 +46,12 @@ function Navbar() {
             Assessment
           </Link>
         </>
+      )}
+
+      {role === "LEARNER" && (
+        <Link className="tab" to="/learner">
+          Learner Dashboard
+        </Link>
       )}
 
       <Link className="tab" to="/analytics">

@@ -50,6 +50,8 @@ function Login() {
         navigate("/admin", { replace: true });
       } else if (role.toUpperCase() === "MENTOR") {
         navigate("/mentor", { replace: true });
+      } else if (role.toUpperCase() === "LEARNER") {
+        navigate("/learner", { replace: true });
       } else {
         setError(`Unauthorized access: unknown role ${role}`);
       }

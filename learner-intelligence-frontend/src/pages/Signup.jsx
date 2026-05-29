@@ -6,7 +6,7 @@ function Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("MENTOR");
+  const [role, setRole] = useState("LEARNER");
   
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -145,6 +145,7 @@ function Signup() {
             onChange={(e) => setRole(e.target.value)}
             disabled={loading || success}
           >
+            <option value="LEARNER">Learner (View Profile, Scores & Placement Readiness)</option>
             <option value="MENTOR">Mentor (Logging & Assessment)</option>
             <option value="ADMIN">Admin (ML Predictions & Registry)</option>
           </select>

@@ -52,7 +52,36 @@ function Notifications() {
     }
   ];
 
-  const activeNotifications = role === "ADMIN" ? adminNotifications : mentorNotifications;
+  const learnerNotifications = [
+    {
+      title: "Placement Readiness Predicted",
+      description: "AI-based placement readiness models successfully predicted your potential placement status.",
+      time: "Just now",
+      badge: "badge-green",
+      status: "Calculated"
+    },
+    {
+      title: "Scores Updated",
+      description: "Your mentor has updated your attendance and assessment scores.",
+      time: "2 hours ago",
+      badge: "badge-green",
+      status: "Synced"
+    },
+    {
+      title: "Feedback Shared",
+      description: "A new soft skills and behavioral assessment feedback is available.",
+      time: "1 day ago",
+      badge: "badge-yellow",
+      status: "New"
+    }
+  ];
+
+  const activeNotifications = 
+    role === "ADMIN" 
+      ? adminNotifications 
+      : role === "MENTOR" 
+        ? mentorNotifications 
+        : learnerNotifications;
 
   return (
     <>

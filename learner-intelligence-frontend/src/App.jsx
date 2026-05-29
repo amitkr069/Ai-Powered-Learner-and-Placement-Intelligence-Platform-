@@ -10,6 +10,7 @@ import Assessment from "./pages/Assessment";
 import Prediction from "./pages/Prediction";
 import Analytics from "./pages/Analytics";
 import Notifications from "./pages/Notifications";
+import LearnerDashboard from "./pages/LearnerDashboard";
 
 // Protected Route Component for Access Control
 function ProtectedRoute({ children, allowedRoles }) {
@@ -21,7 +22,10 @@ function ProtectedRoute({ children, allowedRoles }) {
   }
 
   if (allowedRoles && !allowedRoles.includes(role)) {
-    return role === "ADMIN" ? <Navigate to="/admin" replace /> : <Navigate to="/mentor" replace />;
+    if (role === "ADMIN") return <Navigate to="/admin" replace />;
+    if (role === "MENTOR") return <Navigate to="/mentor" replace />;
+    if (role === "LEARNER") return <Navigate to="/learner" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return children;
@@ -87,11 +91,21 @@ function App() {
           }
         />
 
+        {/* Learner Protected Routes */}
+        <Route
+          path="/learner"
+          element={
+            <ProtectedRoute allowedRoles={["LEARNER"]}>
+              <LearnerDashboard />
+            </ProtectedRoute>
+          }
+        />
+
         {/* Common Shared Protected Routes */}
         <Route
           path="/analytics"
           element={
-            <ProtectedRoute allowedRoles={["ADMIN", "MENTOR"]}>
+            <ProtectedRoute allowedRoles={["ADMIN", "MENTOR", "LEARNER"]}>
               <Analytics />
             </ProtectedRoute>
           }
@@ -99,7 +113,7 @@ function App() {
         <Route
           path="/notifications"
           element={
-            <ProtectedRoute allowedRoles={["ADMIN", "MENTOR"]}>
+            <ProtectedRoute allowedRoles={["ADMIN", "MENTOR", "LEARNER"]}>
               <Notifications />
             </ProtectedRoute>
           }
