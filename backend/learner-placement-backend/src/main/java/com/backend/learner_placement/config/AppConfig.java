@@ -3,7 +3,6 @@ package com.backend.learner_placement.config;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class AppConfig {
@@ -15,8 +14,5 @@ public class AppConfig {
             .setMatchingStrategy(org.modelmapper.convention.MatchingStrategies.STRICT);
         return modelMapper;
     }
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
+    // RestTemplate removed — analytics now served directly from DB (no Python proxy)
 }
