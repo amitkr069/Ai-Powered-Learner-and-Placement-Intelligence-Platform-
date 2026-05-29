@@ -2,6 +2,7 @@ package com.backend.learner_placement.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.learner_placement.dtos.LearnerDto;
+import com.backend.learner_placement.models.Learner;
 import com.backend.learner_placement.services.LearnerService;
 
 @RestController
@@ -27,6 +29,15 @@ public class LearnerController {
 	
 	public LearnerController(LearnerService learnerService) {
 		this.learnerService= learnerService;
+	}
+	
+	@GetMapping("/paged")
+	public ResponseEntity<Page<Learner>> getLearnersPaged(
+	        @RequestParam(defaultValue = "0") int page,
+	        @RequestParam(defaultValue = "10") int size,
+	        @RequestParam(defaultValue = "learnerId") String sortBy) {
+	    
+	    return ResponseEntity.ok(learnerService.getAllLearnersPaginated(page, size, sortBy));
 	}
 	
 	@PreAuthorize("hasRole('ADMIN')")

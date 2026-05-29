@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +26,11 @@ public class LearnerService {
 	public LearnerService(LearnerRepository learnerRepository, ModelMapper modelMapper) {
 		this.learnerRepository = learnerRepository;
 		this.modelMapper = modelMapper;
+	}
+	
+	public Page<Learner> getAllLearnersPaginated(int page, int size, String sortBy) {
+	    Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+	    return learnerRepository.findAll(pageable); 
 	}
 
 	// bulk csv load
