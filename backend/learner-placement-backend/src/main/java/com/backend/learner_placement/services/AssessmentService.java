@@ -17,11 +17,13 @@ public class AssessmentService {
 	private AssessmentRepository assessmentRepositroy;
 	private LearnerRepository learnerRepository;
 	private ModelMapper modelMapper;
+	private NotificationService notificationService;
 	
-	public AssessmentService(AssessmentRepository assessmentRepositroy, LearnerRepository learnerRepository, ModelMapper modelMapper) {
+	public AssessmentService(AssessmentRepository assessmentRepositroy, LearnerRepository learnerRepository, ModelMapper modelMapper, NotificationService notificationService) {
 		this.assessmentRepositroy = assessmentRepositroy;
 		this.learnerRepository = learnerRepository;
 		this.modelMapper = modelMapper;
+		this.notificationService = notificationService;
 	}
 	
 	public AssessmentDto createAssessment(AssessmentDto assessmentDto) {
@@ -32,6 +34,17 @@ public class AssessmentService {
 		Assessment savedAssessment = assessmentRepositroy.save(assessment);
 		AssessmentDto responseDto = modelMapper.map(savedAssessment, AssessmentDto.class);
 		responseDto.setLearnerId(learner.getLearnerId()); 
+		
+		// Send notification to learner
+		notificationService.sendNotification(
+			"LEARNER", 
+			learner.getLearnerId(), 
+			"New Assessment Logged", 
+			"Your mentor has logged a new assessment grade.", 
+			"badge-green", 
+			"New"
+		);
+		
 		return responseDto; 
 	}
 	

@@ -26,10 +26,12 @@ public class LearnerService {
 
     private final LearnerRepository learnerRepository;
     private final PasswordEncoder passwordEncoder;
+    private final NotificationService notificationService;
 
-    public LearnerService(LearnerRepository learnerRepository, PasswordEncoder passwordEncoder) {
+    public LearnerService(LearnerRepository learnerRepository, PasswordEncoder passwordEncoder, NotificationService notificationService) {
         this.learnerRepository = learnerRepository;
         this.passwordEncoder = passwordEncoder;
+        this.notificationService = notificationService;
     }
 
     // Learner self-registration: only name, email, password
@@ -53,6 +55,27 @@ public class LearnerService {
         learner.setMentorId(request.getMentorId());
         learner.setBatch(request.getBatch());
         Learner updated = learnerRepository.save(learner);
+        
+        // Notify Learner
+        notificationService.sendNotification(
+            "LEARNER", 
+            learner.getLearnerId(), 
+            "Mentor Assigned", 
+            "You have been assigned to Mentor #" + request.getMentorId() + " in batch " + request.getBatch() + ".", 
+            "badge-green", 
+            "Assigned"
+        );
+        
+        // Notify Mentor
+        notificationService.sendNotification(
+            "MENTOR", 
+            request.getMentorId(), 
+            "New Learner Assigned", 
+            "Student #" + learner.getLearnerId() + " (" + learner.getName() + ") has been added to your batch " + request.getBatch() + ".", 
+            "badge-green", 
+            "New"
+        );
+        
         return toDto(updated);
     }
 
@@ -65,6 +88,17 @@ public class LearnerService {
         if (request.getAptitudeScore() != null) learner.setAptitudeScore(request.getAptitudeScore());
         if (request.getCommunicationScore() != null) learner.setCommunicationScore(request.getCommunicationScore());
         Learner updated = learnerRepository.save(learner);
+        
+        // Notify Learner
+        notificationService.sendNotification(
+            "LEARNER", 
+            learner.getLearnerId(), 
+            "Scores Updated", 
+            "Your mentor has updated your attendance and assessment scores.", 
+            "badge-green", 
+            "Synced"
+        );
+        
         return toDto(updated);
     }
 

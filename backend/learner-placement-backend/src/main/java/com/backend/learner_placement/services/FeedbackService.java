@@ -18,11 +18,13 @@ public class FeedbackService {
 	private LearnerRepository learnerRepository;
 	private FeedbackRepository feedbackRepository;
 	private ModelMapper modelMapper;
+	private NotificationService notificationService;
 	
-	public FeedbackService(LearnerRepository learnerRepository, FeedbackRepository feedbackRepository, ModelMapper modelMapper) {
+	public FeedbackService(LearnerRepository learnerRepository, FeedbackRepository feedbackRepository, ModelMapper modelMapper, NotificationService notificationService) {
 		this.feedbackRepository = feedbackRepository;
 		this.learnerRepository = learnerRepository;
 		this.modelMapper = modelMapper;
+		this.notificationService = notificationService;
 	}
 	
 	public FeedbackDto addFeedback(FeedbackDto feedbackDto) {
@@ -36,6 +38,17 @@ public class FeedbackService {
 		Feedback saved = feedbackRepository.save(feedback);
 		FeedbackDto response = modelMapper.map(saved, FeedbackDto.class);
 		response.setLearnerId(learner.getLearnerId());
+		
+		// Send notification to learner
+		notificationService.sendNotification(
+			"LEARNER", 
+			learner.getLearnerId(), 
+			"Feedback Shared", 
+			"A new soft skills and behavioral assessment feedback is available.", 
+			"badge-yellow", 
+			"New"
+		);
+		
 		return response; 
 	}
 	

@@ -21,14 +21,16 @@ public class PredictionService {
 	private LearnerRepository learnerRepository;
 	private ModelMapper modelMapper;
 	private final RestTemplate restTemplate; 
+	private NotificationService notificationService;
 
 	private final String PYTHON_API_URL = "http://localhost:8000/predict";
 	
-	public PredictionService(PredictionRepository predictionRepository, LearnerRepository learnerRepository, ModelMapper modelMapper, RestTemplate restTemplate) {
+	public PredictionService(PredictionRepository predictionRepository, LearnerRepository learnerRepository, ModelMapper modelMapper, RestTemplate restTemplate, NotificationService notificationService) {
 		this.predictionRepository = predictionRepository;
 		this.learnerRepository = learnerRepository;
 		this.modelMapper = modelMapper;
 		this.restTemplate = restTemplate;
+		this.notificationService = notificationService;
 	}
 
 public PredictionDto generateAndSavePrediction(Long learnerId) {
@@ -59,6 +61,17 @@ public PredictionDto generateAndSavePrediction(Long learnerId) {
 		Prediction saved = predictionRepository.save(prediction);
 		PredictionDto response = modelMapper.map(saved, PredictionDto.class);
 		response.setLearnerId(learner.getLearnerId());
+		
+		// Send notification to learner
+		notificationService.sendNotification(
+			"LEARNER", 
+			learner.getLearnerId(), 
+			"Placement Readiness Predicted", 
+			"AI-based placement readiness models successfully predicted your potential placement status.", 
+			"badge-green", 
+			"Calculated"
+		);
+		
 		return response;
 	}
 
