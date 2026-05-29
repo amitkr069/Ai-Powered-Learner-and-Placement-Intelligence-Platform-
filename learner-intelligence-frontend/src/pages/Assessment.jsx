@@ -18,7 +18,13 @@ function Assessment() {
   const fetchLearners = async () => {
     try {
       setLoadingLearners(true);
-      const response = await api.get("/api/learners");
+      const role = localStorage.getItem("role");
+      const mentorId = localStorage.getItem("mentorId");
+      const endpoint = (role === "MENTOR" && mentorId) 
+        ? `/api/learners/mentor/${mentorId}` 
+        : "/api/learners";
+      
+      const response = await api.get(endpoint);
       setLearners(response.data || []);
       if (response.data?.length > 0) {
         setSelectedLearnerId(response.data[0].learnerId.toString());
