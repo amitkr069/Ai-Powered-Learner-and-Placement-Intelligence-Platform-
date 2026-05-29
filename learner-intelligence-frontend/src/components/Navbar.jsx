@@ -9,6 +9,8 @@ function Navbar() {
     localStorage.removeItem("role");
     localStorage.removeItem("name");
     localStorage.removeItem("email");
+    localStorage.removeItem("id");
+    localStorage.removeItem("userId");
     navigate("/", { replace: true });
   };
 

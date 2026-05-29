@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import api from "../services/api";
+import FeedbackModal from "../components/FeedbackModal";
 import {
   BarChart,
   Bar,
@@ -16,6 +17,20 @@ function AdminDashboard() {
   const [learners, setLearners] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  
+  // Feedback Modal State
+  const [selectedFeedbackLearner, setSelectedFeedbackLearner] = useState(null);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+
+  const openFeedbackModal = (learner) => {
+    setSelectedFeedbackLearner(learner);
+    setIsFeedbackOpen(true);
+  };
+
+  const closeFeedbackModal = () => {
+    setSelectedFeedbackLearner(null);
+    setIsFeedbackOpen(false);
+  };
 
   const fetchLearners = async () => {
     try {
@@ -289,7 +304,21 @@ function AdminDashboard() {
                         </div>
                         <span style={{ fontSize: "14px", fontWeight: "600" }}>{learner.communicationScore || 0}</span>
                       </td>
-                      <td>
+                      <td style={{ display: "flex", gap: "8px" }}>
+                        <button
+                          className="btn"
+                          onClick={() => openFeedbackModal(learner)}
+                          style={{
+                            padding: "6px 12px",
+                            fontSize: "13px",
+                            borderRadius: "6px",
+                            background: "rgba(0, 227, 140, 0.15)",
+                            color: "#00e38c",
+                            border: "1px solid rgba(0, 227, 140, 0.3)"
+                          }}
+                        >
+                          Feedback
+                        </button>
                         <button
                           className="btn btn-warning"
                           onClick={() => handleDelete(learner.learnerId)}
@@ -313,6 +342,12 @@ function AdminDashboard() {
           )}
         </div>
       </div>
+      
+      <FeedbackModal
+        learner={selectedFeedbackLearner}
+        isOpen={isFeedbackOpen}
+        onClose={closeFeedbackModal}
+      />
     </>
   );
 }

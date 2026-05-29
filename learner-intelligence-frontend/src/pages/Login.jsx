@@ -15,6 +15,8 @@ function Login() {
     localStorage.removeItem("role");
     localStorage.removeItem("name");
     localStorage.removeItem("email");
+    localStorage.removeItem("id");
+    localStorage.removeItem("userId");
   }, []);
 
   const handleLogin = async (e) => {
@@ -29,7 +31,7 @@ function Login() {
 
     try {
       const response = await api.post("/auth/login", { email, password });
-      const { token, role, name, email: userEmail } = response.data;
+      const { token, role, name, email: userEmail, id } = response.data;
 
       if (!token) {
         throw new Error("Authentication failed: No token returned.");
@@ -40,6 +42,8 @@ function Login() {
       localStorage.setItem("role", role.toUpperCase());
       localStorage.setItem("name", name || "");
       localStorage.setItem("email", userEmail || "");
+      localStorage.setItem("id", id || "");
+      localStorage.setItem("userId", id || "");
 
       // Redirect depending on user role
       if (role.toUpperCase() === "ADMIN") {
