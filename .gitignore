@@ -27,5 +27,8 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+.metadata/
+backend/.metadata/
 # Custom Secret Files (Optional but good practice)
 # application-secret.properties
