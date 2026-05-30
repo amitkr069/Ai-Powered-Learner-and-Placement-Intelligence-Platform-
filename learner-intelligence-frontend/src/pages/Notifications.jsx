@@ -1,15 +1,10 @@
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
-import { io } from "socket.io-client";
-
-// Global socket connection to prevent reconnects on re-renders
-const socket = io("http://localhost:3001", { autoConnect: false });
+import { useNotifications } from "../context/NotificationContext";
 
 function Notifications() {
   const role = localStorage.getItem("role") || "";
-  const userId = role === "MENTOR" ? localStorage.getItem("mentorId") : localStorage.getItem("id");
-
-  const [liveNotifications, setLiveNotifications] = useState([]);
+  const { liveNotifications } = useNotifications() || { liveNotifications: [] };
 
   // Static fallback notifications as requested
   const adminNotifications = [
@@ -35,67 +30,6 @@ function Notifications() {
       status: "Sync"
     }
   ];
-
-  const initialMentorNotifications = [
-    {
-      title: "Assessment metrics loaded",
-      description: "Logged test scores have successfully refreshed in the placement analytics registry.",
-      time: "1 hour ago",
-      badge: "badge-green",
-      status: "Updated"
-    },
-    {
-      title: "Soft skills criteria modified",
-      description: "Pydantic schema constraints relaxed on soft skills inputs to safely support null values.",
-      time: "1 day ago",
-      badge: "badge-yellow",
-      status: "Updated"
-    }
-  ];
-
-  const initialLearnerNotifications = [
-    {
-      title: "Scores Updated",
-      description: "Your mentor has updated your attendance and assessment scores.",
-      time: "2 hours ago",
-      badge: "badge-green",
-      status: "Synced"
-    },
-    {
-      title: "Feedback Shared",
-      description: "A new soft skills and behavioral assessment feedback is available.",
-      time: "1 day ago",
-      badge: "badge-yellow",
-      status: "New"
-    }
-  ];
-
-  useEffect(() => {
-    // Initialize state with static history for non-admins
-    if (role === "MENTOR") setLiveNotifications(initialMentorNotifications);
-    if (role === "LEARNER") setLiveNotifications(initialLearnerNotifications);
-
-    // Admin stays static, no socket connection needed
-    if (role === "ADMIN") return;
-
-    // Connect socket for Mentors and Learners
-    socket.connect();
-
-    socket.on("connect", () => {
-      console.log("Connected to notification service");
-      socket.emit("register", { role, id: userId });
-    });
-
-    socket.on("notification", (newNotif) => {
-      setLiveNotifications((prev) => [newNotif, ...prev]);
-    });
-
-    return () => {
-      socket.off("connect");
-      socket.off("notification");
-      socket.disconnect();
-    };
-  }, [role, userId]);
 
   const activeNotifications = role === "ADMIN" ? adminNotifications : liveNotifications;
 
