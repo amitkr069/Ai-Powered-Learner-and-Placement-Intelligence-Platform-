@@ -32,51 +32,51 @@ function ProtectedRoute({ children, allowedRoles }) {
 
 function App() {
   return (
-    <NotificationProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <NotificationProvider>
         <Routes>
           {/* Public Routes */}
-        <Route path="/" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+          <Route path="/" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
 
-        {/* Admin Routes */}
-        <Route path="/admin" element={<ProtectedRoute allowedRoles={["ADMIN"]}><AdminDashboard /></ProtectedRoute>} />
-        <Route path="/add-mentor" element={<ProtectedRoute allowedRoles={["ADMIN"]}><AddMentor /></ProtectedRoute>} />
-        <Route path="/csv-upload" element={<ProtectedRoute allowedRoles={["ADMIN"]}><CsvUpload /></ProtectedRoute>} />
-        <Route path="/prediction" element={<ProtectedRoute allowedRoles={["ADMIN"]}><Prediction /></ProtectedRoute>} />
+          {/* Admin Routes */}
+          <Route path="/admin" element={<ProtectedRoute allowedRoles={["ADMIN"]}><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/add-mentor" element={<ProtectedRoute allowedRoles={["ADMIN"]}><AddMentor /></ProtectedRoute>} />
+          <Route path="/csv-upload" element={<ProtectedRoute allowedRoles={["ADMIN"]}><CsvUpload /></ProtectedRoute>} />
+          <Route path="/prediction" element={<ProtectedRoute allowedRoles={["ADMIN"]}><Prediction /></ProtectedRoute>} />
 
-        {/* Mentor Routes */}
-        <Route path="/mentor" element={<ProtectedRoute allowedRoles={["MENTOR"]}><MentorDashboard /></ProtectedRoute>} />
-        <Route path="/assessment" element={<ProtectedRoute allowedRoles={["MENTOR"]}><Assessment /></ProtectedRoute>} />
+          {/* Mentor Routes */}
+          <Route path="/mentor" element={<ProtectedRoute allowedRoles={["MENTOR"]}><MentorDashboard /></ProtectedRoute>} />
+          <Route path="/assessment" element={<ProtectedRoute allowedRoles={["MENTOR"]}><Assessment /></ProtectedRoute>} />
 
-        {/* Learner Routes */}
-        <Route path="/learner" element={<ProtectedRoute allowedRoles={["LEARNER"]}><LearnerDashboard /></ProtectedRoute>} />
+          {/* Learner Routes */}
+          <Route path="/learner" element={<ProtectedRoute allowedRoles={["LEARNER"]}><LearnerDashboard /></ProtectedRoute>} />
 
-        {/* Analytics — Admin and Mentor ONLY (not Learner) */}
-        <Route
-          path="/analytics"
-          element={
-            <ProtectedRoute allowedRoles={["ADMIN", "MENTOR"]}>
-              <Analytics />
-            </ProtectedRoute>
-          }
-        />
+          {/* Analytics — Admin and Mentor ONLY (not Learner) */}
+          <Route
+            path="/analytics"
+            element={
+              <ProtectedRoute allowedRoles={["ADMIN", "MENTOR"]}>
+                <Analytics />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Notifications — all roles */}
-        <Route
-          path="/notifications"
-          element={
-            <ProtectedRoute allowedRoles={["ADMIN", "MENTOR", "LEARNER"]}>
-              <Notifications />
-            </ProtectedRoute>
-          }
-        />
+          {/* Notifications — all roles */}
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedRoute allowedRoles={["ADMIN", "MENTOR", "LEARNER"]}>
+                <Notifications />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Catch-all */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+          {/* Catch-all */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </NotificationProvider>
     </BrowserRouter>
-    </NotificationProvider>
   );
 }
 

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { io } from "socket.io-client";
+import { useLocation } from "react-router-dom";
 
 const NotificationContext = createContext();
 
@@ -8,6 +9,8 @@ const socket = io("http://localhost:3001", { autoConnect: false });
 
 export const NotificationProvider = ({ children }) => {
   const [liveNotifications, setLiveNotifications] = useState([]);
+  const location = useLocation(); // Force re-render on route change
+
   const role = localStorage.getItem("role") || "";
   const userId = role === "MENTOR" ? localStorage.getItem("mentorId") : localStorage.getItem("id");
 
