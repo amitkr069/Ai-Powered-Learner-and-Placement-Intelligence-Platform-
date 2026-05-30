@@ -1,5 +1,6 @@
 package com.backend.learner_placement.models;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,84 +11,73 @@ import jakarta.persistence.Table;
 @Table(name = "learners")
 public class Learner {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long learnerId;
-	
-	private String batch;
-	private Long mentorId;
-	private Integer attendance;
-	private Integer codingScore;
-	private Integer aptitudeScore;
-	private Integer communicationScore;
-	
-	public Learner(Long learnerId, String batch, Long mentorId, Integer attendance, Integer codingScore,
-			Integer aptitudeScore, Integer communicationScore) {
-		this.learnerId = learnerId;
-		this.batch = batch;
-		this.mentorId = mentorId;
-		this.attendance = attendance;
-		this.codingScore = codingScore;
-		this.aptitudeScore = aptitudeScore;
-		this.communicationScore = communicationScore;
-	}
-	
-	public Learner() {}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long learnerId;
 
-	public Long getLearnerId() {
-		return learnerId;
-	}
+    // Auth fields (set at registration)
+    private String name;
 
-	public void setLearnerId(Long learnerId) {
-		this.learnerId = learnerId;
-	}
+    @Column(unique = true, nullable = false)
+    private String email;
 
-	public String getBatch() {
-		return batch;
-	}
+    private String password;
 
-	public void setBatch(String batch) {
-		this.batch = batch;
-	}
+    // Assigned by admin
+    private Long mentorId;
+    private String batch;
 
-	public Long getMentorId() {
-		return mentorId;
-	}
+    // Updated by mentor
+    private Integer attendance;
+    private Integer codingScore;
+    private Integer aptitudeScore;
+    private Integer communicationScore;
 
-	public void setMentorId(Long mentorId) {
-		this.mentorId = mentorId;
-	}
+    public Learner() {}
 
-	public Integer getAttendance() {
-		return attendance;
-	}
+    public Learner(Long learnerId, String name, String email, String password, Long mentorId,
+                   String batch, Integer attendance, Integer codingScore,
+                   Integer aptitudeScore, Integer communicationScore) {
+        this.learnerId = learnerId;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.mentorId = mentorId;
+        this.batch = batch;
+        this.attendance = attendance;
+        this.codingScore = codingScore;
+        this.aptitudeScore = aptitudeScore;
+        this.communicationScore = communicationScore;
+    }
 
-	public void setAttendance(Integer attendance) {
-		this.attendance = attendance;
-	}
+    // Getters and Setters
+    public Long getLearnerId() { return learnerId; }
+    public void setLearnerId(Long learnerId) { this.learnerId = learnerId; }
 
-	public Integer getCodingScore() {
-		return codingScore;
-	}
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-	public void setCodingScore(Integer codingScore) {
-		this.codingScore = codingScore;
-	}
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-	public Integer getAptitudeScore() {
-		return aptitudeScore;
-	}
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-	public void setAptitudeScore(Integer aptitudeScore) {
-		this.aptitudeScore = aptitudeScore;
-	}
+    public Long getMentorId() { return mentorId; }
+    public void setMentorId(Long mentorId) { this.mentorId = mentorId; }
 
-	public Integer getCommunicationScore() {
-		return communicationScore;
-	}
+    public String getBatch() { return batch; }
+    public void setBatch(String batch) { this.batch = batch; }
 
-	public void setCommunicationScore(Integer communicationScore) {
-		this.communicationScore = communicationScore;
-	}
+    public Integer getAttendance() { return attendance; }
+    public void setAttendance(Integer attendance) { this.attendance = attendance; }
 
+    public Integer getCodingScore() { return codingScore; }
+    public void setCodingScore(Integer codingScore) { this.codingScore = codingScore; }
+
+    public Integer getAptitudeScore() { return aptitudeScore; }
+    public void setAptitudeScore(Integer aptitudeScore) { this.aptitudeScore = aptitudeScore; }
+
+    public Integer getCommunicationScore() { return communicationScore; }
+    public void setCommunicationScore(Integer communicationScore) { this.communicationScore = communicationScore; }
 }
