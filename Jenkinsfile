@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        AWS_DEFAULT_REGION = 'ap-southeast-2' // Change to your AWS region
-        S3_BUCKET_NAME     = 'ai-powered-learninig-platform' // Change to your S3 bucket name
-        EC2_PUBLIC_IP      = '54.79.172.195' // Change to your EC2 public IP or domain
+        AWS_DEFAULT_REGION = 'ap-southeast-2' 
+        S3_BUCKET_NAME     = 'ai-powered-learninig-platform' 
+        EC2_PUBLIC_IP      = '15.135.73.75' 
     }
 
     stages {
