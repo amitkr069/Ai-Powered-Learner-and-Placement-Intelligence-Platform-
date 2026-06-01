@@ -176,7 +176,7 @@ The project includes a declarative Jenkins pipeline configured in the Jenkinsfil
 - Infrastructure Target Parameters:
   - AWS Default Region: ap-southeast-2
   - Target AWS S3 Bucket Name: ai-powered-learninig-platform (Static website hosting)
-  - Target AWS EC2 Host IP Address: 54.79.172.195 (Docker Compose runtime container host)
+  - Target AWS EC2 Host IP Address: YOUR_EC2_IP (Docker Compose runtime container host)
 
 - Pipeline Deployment Flow:
   - Stage 1: Checkout
