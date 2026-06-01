@@ -4,7 +4,7 @@ pipeline {
     environment {
         AWS_DEFAULT_REGION = 'ap-southeast-2' 
         S3_BUCKET_NAME     = 'ai-powered-learninig-platform' 
-        EC2_PUBLIC_IP      = '15.135.73.75' 
+        EC2_PUBLIC_IP      = '13.210.164.2' 
     }
 
     stages {
